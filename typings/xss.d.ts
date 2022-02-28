@@ -22,6 +22,7 @@ declare module "xss" {
         allowCommentTag?: boolean;
         stripBlankChar?: boolean;
         css?: {} | boolean;
+        muteLogs?: boolean;
       }
 
       interface IWhiteList extends Record<string, string[] | undefined> {
