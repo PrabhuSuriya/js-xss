@@ -7,6 +7,7 @@
 
 var FilterCSS = require("cssfilter").FilterCSS;
 var getDefaultCSSWhiteList = require("cssfilter").getDefaultWhiteList;
+var muteLogs = false;
 var _ = require("./util");
 
 function getDefaultWhiteList() {
@@ -361,7 +362,7 @@ function StripTagBody(tags, next) {
     onIgnoreTag: function (tag, html, options) {
       if (isRemoveTag(tag)) {
         if (options.isClosing) {
-          var ret = "[/removed]";
+          var ret = muteLogs ? "" : "[/removed]";
           var end = options.position + ret.length;
           removeList.push([
             posStart !== false ? posStart : options.position,
@@ -373,7 +374,7 @@ function StripTagBody(tags, next) {
           if (!posStart) {
             posStart = options.position;
           }
-          return "[removed]";
+          return muteLogs ? "" : "[removed]";
         }
       } else {
         return next(tag, html, options);
@@ -457,6 +458,7 @@ exports.StripTagBody = StripTagBody;
 exports.stripCommentTag = stripCommentTag;
 exports.stripBlankChar = stripBlankChar;
 exports.cssFilter = defaultCSSFilter;
+exports.muteLogs = muteLogs;
 exports.getDefaultCSSWhiteList = getDefaultCSSWhiteList;
 
 },{"./util":4,"cssfilter":8}],2:[function(require,module,exports){
@@ -881,6 +883,7 @@ function FilterXSS(options) {
   options.onIgnoreTagAttr = options.onIgnoreTagAttr || DEFAULT.onIgnoreTagAttr;
   options.safeAttrValue = options.safeAttrValue || DEFAULT.safeAttrValue;
   options.escapeHtml = options.escapeHtml || DEFAULT.escapeHtml;
+  options.muteLogs = options.muteLogs || DEFAULT.muteLogs;
   this.options = options;
 
   if (options.css === false) {
@@ -912,6 +915,7 @@ FilterXSS.prototype.process = function (html) {
   var onIgnoreTagAttr = options.onIgnoreTagAttr;
   var safeAttrValue = options.safeAttrValue;
   var escapeHtml = options.escapeHtml;
+  var muteLogs = options.muteLogs;
   var cssFilter = me.cssFilter;
 
   // remove invisible characters
